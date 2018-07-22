@@ -1,0 +1,857 @@
+patch-package
+new file mode 100644
+--- /dev/null
++++ b/node_modules/assets-webpack-plugin/.babelrc
+@@ -0,0 +1,3 @@
++{
++  "presets": ["env"]
++}
+new file mode 100644
+--- /dev/null
++++ b/node_modules/assets-webpack-plugin/.gitignore
+@@ -0,0 +1,9 @@
++node_modules
++dist
++tmp
++npm-debug.log*
++.package.json
++
++# Lock files shouldn't be committed for libraries https://stackoverflow.com/a/40206145
++yarn.lock
++package-lock.json
+deleted file mode 100644
+--- a/node_modules/assets-webpack-plugin/.npmignore
++++ /dev/null
+@@ -1,3 +0,0 @@
+-node_modules
+-dist
+-tmp
+--- a/node_modules/assets-webpack-plugin/.travis.yml
++++ b/node_modules/assets-webpack-plugin/.travis.yml
+@@ -1,7 +1,7 @@
+ sudo: false
+ language: node_js
+ node_js:
+-  - 4.4
++  - "8"
+ 
+ script:
+   - npm run lint
+@@ -10,3 +10,20 @@ script:
+ cache:
+   directories:
+     - node_modules
++
++before_install:
++- '[[ $(node -v) =~ ^v9.*$ ]] || npm install -g npm@latest'
++- npm install -g greenkeeper-lockfile@1
++before_script: greenkeeper-lockfile-update
++after_script: greenkeeper-lockfile-upload
++
++before_deploy:
++  - git config --local user.name "ztoben"
++  - git config --local user.email "zach.toben@gmail.com"
++deploy:
++  provider: releases
++  api_key: $GH_TOKEN
++  skip_cleanup: true
++  on:
++    branch: master
++    tags: true
+--- a/node_modules/assets-webpack-plugin/CHANGELOG.md
++++ b/node_modules/assets-webpack-plugin/CHANGELOG.md
+@@ -10,6 +10,72 @@ This change log follows the format documented in [Keep a CHANGELOG].
+ 
+ ## Unreleased
+ 
++## 3.8.3 - 2018-06-18
++
++### Changed
++
++- Package json was pointing to the wrong index file.
++
++## 3.8.2 - 2018-06-18
++
++### Changed
++
++- Add babel to the build process.
++
++## 3.8.1 - 2018-06-18
++
++### Changed
++
++- Support for listing the manifest entry first when `manifestFirst` option is set. See [#66](https://github.com/kossnocorp/assets-webpack-plugin/issues/66) for details.
++
++## 3.8.0 - 2018-06-15
++
++### Changed
++
++- Reverts [#90](https://github.com/kossnocorp/assets-webpack-plugin/pull/90), fixes [93](https://github.com/kossnocorp/assets-webpack-plugin/issues/93) and [92](https://github.com/kossnocorp/assets-webpack-plugin/issues/92)
++
++## 3.7.2 - 2018-06-14
++
++### Changed
++
++- Reduces npm package size [#67](https://github.com/kossnocorp/assets-webpack-plugin/issues/67)
++
++## 3.7.1 - 2018-06-13
++
++### Changed
++
++- Fixes a parsing error with the asset path introduced by the fix for [#88](https://github.com/kossnocorp/assets-webpack-plugin/issues/88)
++
++## 3.7.0 - 2018-06-13
++
++### Changed
++
++- Adds all assets to the manifest that aren't in a chunk (kudos to [@Kronuz](https://github.com/Kronuz) see [#65](https://github.com/kossnocorp/assets-webpack-plugin/pull/65))
++
++## 3.6.3 - 2018-06-13
++
++### Changed
++
++- Add support for multiple files of the same extension (kudos to [@aaronatmycujoo](https://github.com/aaronatmycujoo) see [#79](https://github.com/kossnocorp/assets-webpack-plugin/pull/79) and [@Kronuz](https://github.com/Kronuz) see [#64](https://github.com/kossnocorp/assets-webpack-plugin/pull/64))
++
++## 3.6.2 - 2018-06-13
++
++### Changed
++
++- Fixed incorrect concatination of asset file names and directory path see [#88](https://github.com/kossnocorp/assets-webpack-plugin/issues/88)
++
++## 3.6.1 - 2018-06-13
++
++### Changed
++
++- webpack-dev-server (which uses memory-fs) correctly generates the manifest inside the memory file system (kudos to [@Kronuz](https://github.com/Kronuz) see [#90](https://github.com/kossnocorp/assets-webpack-plugin/pull/90))
++
++## 3.6.0 - 2018-05-29
++
++### Changed
++
++- webpack 4 support (kudos to [@ztoben](https://github.com/ztoben) and [@saveman71](https://github.com/saveman71) see [#89](https://github.com/kossnocorp/assets-webpack-plugin/pull/89))
++
+ ## 3.5.1 - 2017-01-20
+ 
+ ### Fixed
+new file mode 100644
+--- /dev/null
++++ b/node_modules/assets-webpack-plugin/LICENSE
+@@ -0,0 +1,21 @@
++MIT License
++
++Copyright (c) 2018 Zach Toben
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
+--- a/node_modules/assets-webpack-plugin/appveyor.yml
++++ b/node_modules/assets-webpack-plugin/appveyor.yml
+@@ -1,5 +1,8 @@
+ environment:
+-  nodejs_version: 4.4
++  nodejs_version: "8"
++
++platform:
++  - x64
+ 
+ install:
+   - ps: Install-Product node $env:nodejs_version
+new file mode 100644
+--- /dev/null
++++ b/node_modules/assets-webpack-plugin/contributors.md
+@@ -0,0 +1,65 @@
++###### Contributors
++[Sebastian Porto](https://github.com/sporto)
++<font color="#999">40 Commits</font> / <font color="#6cc644">2822++</font> / <font color="#bd3c00"> 2025--</font>
++<font color="#dedede">35.40%&nbsp;<font color="#dedede">||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><font color="#f4f4f4">||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Zach Toben](https://github.com/ztoben)
++<font color="#999">17 Commits</font> / <font color="#6cc644">618++</font> / <font color="#bd3c00"> 396--</font>
++<font color="#dedede">15.04%&nbsp;<font color="#dedede">|||||||||||||||||||||||||||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[null](https://github.com/ju1ius)
++<font color="#999">15 Commits</font> / <font color="#6cc644">1488++</font> / <font color="#bd3c00"> 992--</font>
++<font color="#dedede">13.27%&nbsp;<font color="#dedede">||||||||||||||||||||||||</font><font color="#f4f4f4">||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Sasha Koss](https://github.com/kossnocorp)
++<font color="#999">11 Commits</font> / <font color="#6cc644">726++</font> / <font color="#bd3c00"> 801--</font>
++<font color="#dedede">09.73%&nbsp;<font color="#dedede">|||||||||||||||||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[null](https://github.com/dimchez)
++<font color="#999">6 Commits</font> / <font color="#6cc644">369++</font> / <font color="#bd3c00"> 196--</font>
++<font color="#dedede">05.31%&nbsp;<font color="#dedede">|||||||||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Rostislav](https://github.com/galkinrost)
++<font color="#999">3 Commits</font> / <font color="#6cc644">47++</font> / <font color="#bd3c00"> 3--</font>
++<font color="#dedede">02.65%&nbsp;<font color="#dedede">||||</font><font color="#f4f4f4">||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Germán Méndez Bravo](https://github.com/Kronuz)
++<font color="#999">3 Commits</font> / <font color="#6cc644">33++</font> / <font color="#bd3c00"> 17--</font>
++<font color="#dedede">02.65%&nbsp;<font color="#dedede">||||</font><font color="#f4f4f4">||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Alex Afonin](https://github.com/Tuch)
++<font color="#999">2 Commits</font> / <font color="#6cc644">17++</font> / <font color="#bd3c00"> 3--</font>
++<font color="#dedede">01.77%&nbsp;<font color="#dedede">|||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Islam Sharabash](https://github.com/ibash)
++<font color="#999">2 Commits</font> / <font color="#6cc644">63++</font> / <font color="#bd3c00"> 12--</font>
++<font color="#dedede">01.77%&nbsp;<font color="#dedede">|||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Ernesto Rocha](https://github.com/ernestorocha)
++<font color="#999">2 Commits</font> / <font color="#6cc644">755++</font> / <font color="#bd3c00"> 722--</font>
++<font color="#dedede">01.77%&nbsp;<font color="#dedede">|||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Hugo Monteiro](https://github.com/monteiro)
++<font color="#999">2 Commits</font> / <font color="#6cc644">19++</font> / <font color="#bd3c00"> 15--</font>
++<font color="#dedede">01.77%&nbsp;<font color="#dedede">|||</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Dmitriy Kubyshkin](https://github.com/grassator)
++<font color="#999">1 Commits</font> / <font color="#6cc644">10++</font> / <font color="#bd3c00"> 24--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Jonny Gerig Meyer](https://github.com/jgerigmeyer)
++<font color="#999">1 Commits</font> / <font color="#6cc644">32++</font> / <font color="#bd3c00"> 6--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Túlio Ornelas](https://github.com/tulios)
++<font color="#999">1 Commits</font> / <font color="#6cc644">50++</font> / <font color="#bd3c00"> 5--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[airwin](https://github.com/airwin)
++<font color="#999">1 Commits</font> / <font color="#6cc644">3++</font> / <font color="#bd3c00"> 2--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Matt Krick](https://github.com/mattkrick)
++<font color="#999">1 Commits</font> / <font color="#6cc644">107++</font> / <font color="#bd3c00"> 0--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Dido Arellano](https://github.com/didoarellano)
++<font color="#999">1 Commits</font> / <font color="#6cc644">2++</font> / <font color="#bd3c00"> 2--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Joe Lencioni](https://github.com/lencioni)
++<font color="#999">1 Commits</font> / <font color="#6cc644">6++</font> / <font color="#bd3c00"> 7--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Kane](https://github.com/kane-c)
++<font color="#999">1 Commits</font> / <font color="#6cc644">3++</font> / <font color="#bd3c00"> 3--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Danny Guo](https://github.com/dguo)
++<font color="#999">1 Commits</font> / <font color="#6cc644">1++</font> / <font color="#bd3c00"> 1--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++[Yuriy Grunin](https://github.com/th0r)
++<font color="#999">1 Commits</font> / <font color="#6cc644">41++</font> / <font color="#bd3c00"> 1--</font>
++<font color="#dedede">00.88%&nbsp;<font color="#dedede">|</font><font color="#f4f4f4">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</font><br><br>
++###### [Generated](https://github.com/jakeleboeuf/contributor) on Thu Jun 14 2018 07:52:31 GMT-0500 (CDT)
+\ No newline at end of file
+--- a/node_modules/assets-webpack-plugin/index.js
++++ b/node_modules/assets-webpack-plugin/index.js
+@@ -13,19 +13,19 @@ function AssetsWebpackPlugin (options) {
+     filename: 'webpack-assets.json',
+     prettyPrint: false,
+     update: false,
+-    fullPath: true
++    fullPath: true,
++    manifestFirst: true
+   }, options)
+   this.writer = createQueuedWriter(createOutputWriter(this.options))
+ }
+ 
+ AssetsWebpackPlugin.prototype = {
+-
+   constructor: AssetsWebpackPlugin,
+ 
+   apply: function (compiler) {
+     var self = this
+ 
+-    compiler.plugin('after-emit', function (compilation, callback) {
++    var afterEmit = (compilation, callback) => {
+       var options = compiler.options
+       var stats = compilation.getStats().toJson({
+         hash: true,
+@@ -37,35 +37,49 @@ AssetsWebpackPlugin.prototype = {
+         errorDetails: false,
+         timings: false
+       })
+-            // publicPath with resolved [hash] placeholder
+-
+-      var assetPath = (stats.publicPath && self.options.fullPath) ? stats.publicPath : ''
+-            // assetsByChunkName contains a hash with the bundle names and the produced files
+-            // e.g. { one: 'one-bundle.js', two: 'two-bundle.js' }
+-            // in some cases (when using a plugin or source maps) it might contain an array of produced files
+-            // e.g. {
+-            // main:
+-            //   [ 'index-bundle-42b6e1ec4fa8c5f0303e.js',
+-            //     'index-bundle-42b6e1ec4fa8c5f0303e.js.map' ]
+-            // }
+-      var assetsByChunkName = stats.assetsByChunkName
+-
+-      var output = Object.keys(assetsByChunkName).reduce(function (chunkMap, chunkName) {
+-        var assets = assetsByChunkName[chunkName]
++      // publicPath with resolved [hash] placeholder
++
++      var assetPath =
++        stats.publicPath && self.options.fullPath ? stats.publicPath : ''
++      var entries = stats.entrypoints || stats.assetsByChunkName
++      var seenAssets = {}
++
++      var chunks = Object.keys(entries)
++      chunks.push('') // push "unamed" chunk
++      var output = chunks.reduce(function(chunkMap, chunkName) {
++        var assets = chunkName
++          ? entries[chunkName].assets || entries[chunkName]
++          : stats.assets
+         if (!Array.isArray(assets)) {
+           assets = [assets]
+         }
+-        chunkMap[chunkName] = assets.reduce(function (typeMap, asset) {
+-          if (isHMRUpdate(options, asset) || isSourceMap(options, asset)) {
++        var added = false
++        var typeMap = assets.reduce(function (typeMap, obj) {
++          var asset = obj.name || obj
++          if (isHMRUpdate(options, asset) || isSourceMap(options, asset) || (!chunkName && seenAssets[asset])) {
+             return typeMap
+           }
+ 
+           var typeName = getAssetKind(options, asset)
+-          typeMap[typeName] = assetPath + asset
++          var combinedPath = assetPath && assetPath.slice(-1) !== '/' ? `${assetPath}/${asset}` : assetPath + asset
++          var type = typeof typeMap[typeName]
++          if (type === 'undefined') {
++            typeMap[typeName] = combinedPath
++          } else {
++            if (type === 'string') {
++              typeMap[typeName] = [typeMap[typeName]]
++            }
++            typeMap[typeName].push(combinedPath)
++          }
+ 
++          added = true
++          seenAssets[asset] = true
+           return typeMap
+         }, {})
+ 
++        if (added) {
++          chunkMap[chunkName] = typeMap
++        }
+         return chunkMap
+       }, {})
+ 
+@@ -73,7 +87,11 @@ AssetsWebpackPlugin.prototype = {
+       if (manifestName) {
+         var manifestEntry = output[manifestName]
+         if (manifestEntry) {
+-          var manifestAssetKey = manifestEntry.js.substr(assetPath.length)
++          var js = manifestEntry.js
++          if (!Array.isArray(js)) {
++            js = [js]
++          }
++          var manifestAssetKey = js[js.length - 1].substr(assetPath.length)
+           var parentSource = compilation.assets[manifestAssetKey]
+           var entryText = parentSource.source()
+           if (!entryText) {
+@@ -94,7 +112,15 @@ AssetsWebpackPlugin.prototype = {
+         }
+         callback()
+       })
+-    })
++    }
++
++    if (compiler.hooks) {
++      var plugin = {name: 'AssetsWebpackPlugin'}
++
++      compiler.hooks.afterEmit.tapAsync(plugin, afterEmit)
++    } else {
++      compiler.plugin('after-emit', afterEmit)
++    }
+   }
+ }
+ 
+--- a/node_modules/assets-webpack-plugin/lib/output/createOutputWriter.js
++++ b/node_modules/assets-webpack-plugin/lib/output/createOutputWriter.js
+@@ -5,6 +5,20 @@ var merge = require('lodash.merge')
+ 
+ var error = require('../utils/error')
+ 
++function orderAssets (assets, options) {
++  return options.manifestFirst ? Object.assign({}, ...Object.keys(assets).map(i => ({[i]: assets[i]})).sort((a, b) => {
++    if (a.manifest) {
++      return -1
++    }
++
++    if (b.manifest) {
++      return 1
++    }
++
++    return 0
++  })) : assets
++}
++
+ module.exports = function (options) {
+   var outputPath = path.join(options.path, options.filename)
+   var update = options.update
+@@ -38,7 +52,7 @@ module.exports = function (options) {
+           oldAssets = {}
+         }
+ 
+-        var assets = merge({}, oldAssets, newAssets)
++        var assets = orderAssets(merge({}, oldAssets, newAssets), options)
+         var output = options.processOutput(assets)
+         if (output !== data) {
+           fs.writeFile(outputPath, output, function (err) {
+--- a/node_modules/assets-webpack-plugin/lib/output/createQueuedWriter.js
++++ b/node_modules/assets-webpack-plugin/lib/output/createQueuedWriter.js
+@@ -25,7 +25,7 @@ module.exports = function createQueuedWriter (processor) {
+     queue.push({data: data, callback: callback})
+ 
+     if (empty) {
+-            // start processing
++      // start processing
+       processor(data, iterator(callback))
+     }
+   }
+--- a/node_modules/assets-webpack-plugin/lib/pathTemplate.js
++++ b/node_modules/assets-webpack-plugin/lib/pathTemplate.js
+@@ -3,14 +3,14 @@ var escapeRegExp = require('escape-string-regexp')
+ var SIMPLE_PLACEHOLDER_RX = /^\[(id|name|file|query|filebase)\]/i
+ var HASH_PLACEHOLDER_RX = /^\[((?:chunk)?hash)(?::(\d+))?\]/i
+ 
+-var template_cache = Object.create(null)
++var templateCache = Object.create(null)
+ 
+ module.exports = function createTemplate (str) {
+-  if (!template_cache[str]) {
+-    template_cache[str] = new PathTemplate(str)
++  if (!templateCache[str]) {
++    templateCache[str] = new PathTemplate(str)
+   }
+ 
+-  return template_cache[str]
++  return templateCache[str]
+ }
+ 
+ function PathTemplate (template) {
+@@ -138,14 +138,12 @@ function createTemplateMatcher (fields) {
+     }
+     if (field.placeholder) {
+       switch (field.placeholder) {
+-        case 'id':
+-          pattern += '\\d+'
+-          break
+         case 'hash':
+         case 'chunkhash':
+           pattern += '[0-9a-fA-F]'
+           pattern += field.width ? '{1,' + field.width + '}' : '+'
+           break
++        case 'id':
+         case 'name':
+         case 'file':
+         case 'filebase':
+--- a/node_modules/assets-webpack-plugin/readme.md
++++ b/node_modules/assets-webpack-plugin/readme.md
+@@ -1,5 +1,9 @@
+ # assets-webpack-plugin
+-[![Build Status](https://travis-ci.org/kossnocorp/assets-webpack-plugin.svg?branch=master)](https://travis-ci.org/kossnocorp/assets-webpack-plugin) [![Build status](https://ci.appveyor.com/api/projects/status/qmvi3h6lk0xu8833?svg=true)](https://ci.appveyor.com/project/kossnocorp/assets-webpack-plugin)
++[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
++[![npm package](https://img.shields.io/npm/v/assets-webpack-plugin.svg?style=flat)](https://www.npmjs.org/package/assets-webpack-plugin)
++[![Build Status](https://travis-ci.org/ztoben/assets-webpack-plugin.svg?branch=master)](https://travis-ci.org/ztoben/assets-webpack-plugin)
++[![Build status](https://ci.appveyor.com/api/projects/status/sbchndv12vk45mo3?svg=true)](https://ci.appveyor.com/project/ztoben/assets-webpack-plugin)
++[![Greenkeeper badge](https://badges.greenkeeper.io/ztoben/assets-webpack-plugin.svg)](https://greenkeeper.io/)
+ 
+ Webpack plugin that emits a json file with assets paths.
+ 
+@@ -13,9 +17,11 @@ Webpack plugin that emits a json file with assets paths.
+ 
+ - [Test](#test)
+ 
+-- [Change Log](./CHANGELOG.md)
++- [Change Log](./changelog.md)
+ 
+-- [Contributing Guidelines](./CONTRIBUTING.md)
++- [Contributing Guidelines](./contributing.md)
++
++- [Contributors](./contributors.md)
+ 
+ ## Why Is This Useful?
+ 
+@@ -148,6 +154,17 @@ new AssetsPlugin({includeManifest: 'manifest'})
+ // </script>
+ ```
+ 
++#### `manifestFirst`
++
++Optional. `false` by default.
++
++Orders the assets output so that manifest is the first entry. This is useful for cases where script tags are generated
++from the assets json output, and order of import is important.
++
++```js
++new AssetsPlugin({manifestFirst: true})
++``` 
++
+ #### `path`
+ 
+ Optional. Defaults to the current directory.
+--- a/node_modules/assets-webpack-plugin/test/fixtures/styles.js
++++ b/node_modules/assets-webpack-plugin/test/fixtures/styles.js
+@@ -1 +1,2 @@
+-require('./stylesheet.css')
++require('./stylesheet1.css')
++require('./stylesheet2.css')
+deleted file mode 100644
+--- a/node_modules/assets-webpack-plugin/test/fixtures/stylesheet.css
++++ /dev/null
+@@ -1 +0,0 @@
+-.test { color: red; }
+new file mode 100644
+--- /dev/null
++++ b/node_modules/assets-webpack-plugin/test/fixtures/stylesheet1.css
+@@ -0,0 +1 @@
++.test1 { color: red; }
+new file mode 100644
+--- /dev/null
++++ b/node_modules/assets-webpack-plugin/test/fixtures/stylesheet2.css
+@@ -0,0 +1 @@
++.test2 { color: green; }
+\ No newline at end of file
+--- a/node_modules/assets-webpack-plugin/test/index.test.js
++++ b/node_modules/assets-webpack-plugin/test/index.test.js
+@@ -1,14 +1,12 @@
+ /* eslint-env mocha */
+ 
+ var path = require('path')
+-var webpack = require('webpack')
+-var ExtractTextPlugin = require('extract-text-webpack-plugin')
+ var rmRf = require('rimraf')
+ var Plugin = require('../index.js')
+-var manifestStr = require('./fixtures/manifest.js')
+ 
+ var OUTPUT_DIR = path.join(__dirname, '../tmp')
+ var expectOutput = require('./utils/expectOutput')(OUTPUT_DIR)
++var MiniCssExtractPlugin = require('mini-css-extract-plugin')
+ 
+ describe('Plugin', function () {
+   beforeEach(function (done) {
+@@ -52,7 +50,7 @@ describe('Plugin', function () {
+         path: OUTPUT_DIR,
+         filename: '[name]-bundle.js'
+       },
+-      plugins: [new Plugin({path: 'tmp'})]
++      plugins: [new Plugin({ path: 'tmp' })]
+     }
+ 
+     var expected = {
+@@ -108,7 +106,7 @@ describe('Plugin', function () {
+         path: OUTPUT_DIR,
+         filename: 'index-bundle.js'
+       },
+-      plugins: [new Plugin({path: 'tmp'})]
++      plugins: [new Plugin({ path: 'tmp' })]
+     }
+ 
+     var expected = {
+@@ -132,7 +130,7 @@ describe('Plugin', function () {
+         path: OUTPUT_DIR,
+         filename: 'index-bundle-[hash].js'
+       },
+-      plugins: [new Plugin({path: 'tmp'})]
++      plugins: [new Plugin({ path: 'tmp' })]
+     }
+ 
+     var expected = /{"main":{"js":"index-bundle-[0-9a-f]+\.js"}}/
+@@ -152,7 +150,7 @@ describe('Plugin', function () {
+         path: OUTPUT_DIR,
+         filename: '[name].js?[hash]'
+       },
+-      plugins: [new Plugin({path: 'tmp'})]
++      plugins: [new Plugin({ path: 'tmp' })]
+     }
+ 
+     var expected = /{"main":{"js":"main\.js\?[0-9a-f]+"}}/
+@@ -165,7 +163,9 @@ describe('Plugin', function () {
+     expectOutput(args, done)
+   })
+ 
+-  it('works with ExtractTextPlugin for stylesheets', function (done) {
++  it('works with ExtractTextPlugin for multiple stylesheets', function (done) {
++    var extractTextPlugin1 = new MiniCssExtractPlugin({filename: '[name]-bundle1.css', chunkFilename: '[id].css'})
++    var extractTextPlugin2 = new MiniCssExtractPlugin({filename: '[name]-bundle2.css', chunkFilename: '[id].css'})
+     var webpackConfig = {
+       entry: {
+         one: path.join(__dirname, 'fixtures/one.js'),
+@@ -177,12 +177,26 @@ describe('Plugin', function () {
+         filename: '[name]-bundle.js'
+       },
+       module: {
+-        loaders: [
+-                {test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css-loader')}
++        rules: [
++          {
++            test: /1\.css$/,
++            use: [
++              MiniCssExtractPlugin.loader,
++              'css-loader'
++            ]
++          },
++          {
++            test: /2\.css$/,
++            use: [
++              MiniCssExtractPlugin.loader,
++              'css-loader'
++            ]
++          }
+         ]
+       },
+       plugins: [
+-        new ExtractTextPlugin('[name]-bundle.css', {allChunks: true}),
++        extractTextPlugin1,
++        extractTextPlugin2,
+         new Plugin({
+           path: 'tmp'
+         })
+@@ -198,7 +212,7 @@ describe('Plugin', function () {
+       },
+       styles: {
+         js: 'styles-bundle.js',
+-        css: 'styles-bundle.css'
++        css: ['styles-bundle1.css', 'styles-bundle2.css']
+       }
+     }
+ 
+@@ -218,7 +232,7 @@ describe('Plugin', function () {
+         publicPath: '/public/path/[hash]/',
+         filename: 'index-bundle.js'
+       },
+-      plugins: [new Plugin({path: 'tmp'})]
++      plugins: [new Plugin({ path: 'tmp' })]
+     }
+ 
+     var expected = new RegExp('/public/path/[0-9a-f]+/index-bundle.js', 'i')
+@@ -261,36 +275,6 @@ describe('Plugin', function () {
+     expectOutput(args, done)
+   })
+ 
+-  it('works with CommonChunksPlugin', function (done) {
+-    var webpackConfig = {
+-      entry: {
+-        one: path.join(__dirname, 'fixtures/common-chunks/one.js'),
+-        two: path.join(__dirname, 'fixtures/common-chunks/two.js')
+-      },
+-      output: {
+-        path: OUTPUT_DIR,
+-        filename: '[name].js'
+-      },
+-      plugins: [
+-        new webpack.optimize.CommonsChunkPlugin({name: 'common'}),
+-        new Plugin({path: 'tmp'})
+-      ]
+-    }
+-
+-    var expected = {
+-      one: {js: 'one.js'},
+-      two: {js: 'two.js'},
+-      common: {js: 'common.js'}
+-    }
+-
+-    var args = {
+-      config: webpackConfig,
+-      expected: expected
+-    }
+-
+-    expectOutput(args, done)
+-  })
+-
+   it('allows injection of metadata', function (done) {
+     var webpackConfig = {
+       entry: path.join(__dirname, 'fixtures/one.js'),
+@@ -325,107 +309,4 @@ describe('Plugin', function () {
+ 
+     expectOutput(args, done)
+   })
+-
+-  it('works with default includeManifest', function (done) {
+-    var webpackConfig = {
+-      entry: {
+-        one: path.join(__dirname, 'fixtures/common-chunks/one.js'),
+-        two: path.join(__dirname, 'fixtures/common-chunks/two.js')
+-      },
+-      output: {
+-        path: OUTPUT_DIR,
+-        filename: '[name].js'
+-      },
+-      plugins: [
+-        new webpack.optimize.CommonsChunkPlugin({names: ['common', 'manifest']}),
+-        new Plugin({path: 'tmp', includeManifest: true})
+-      ]
+-    }
+-
+-    var expected = {
+-      one: {js: 'one.js'},
+-      two: {js: 'two.js'},
+-      common: {js: 'common.js'},
+-      manifest: {
+-        js: 'manifest.js',
+-        text: manifestStr
+-      }
+-    }
+-
+-    var args = {
+-      config: webpackConfig,
+-      expected: expected
+-    }
+-
+-    expectOutput(args, done)
+-  })
+-
+-  it('works with custom includeManifest', function (done) {
+-    var webpackConfig = {
+-      entry: {
+-        one: path.join(__dirname, 'fixtures/common-chunks/one.js'),
+-        two: path.join(__dirname, 'fixtures/common-chunks/two.js')
+-      },
+-      output: {
+-        path: OUTPUT_DIR,
+-        filename: '[name].js'
+-      },
+-      plugins: [
+-        new webpack.optimize.CommonsChunkPlugin({names: ['common', 'manifesto']}),
+-        new Plugin({path: 'tmp', includeManifest: 'manifesto'})
+-      ]
+-    }
+-
+-    var expected = {
+-      one: {js: 'one.js'},
+-      two: {js: 'two.js'},
+-      common: {js: 'common.js'},
+-      manifesto: {
+-        js: 'manifesto.js',
+-        text: manifestStr
+-      }
+-    }
+-
+-    var args = {
+-      config: webpackConfig,
+-      expected: expected
+-    }
+-
+-    expectOutput(args, done)
+-  })
+-
+-  it('supports source maps with includeManifest', function (done) {
+-    var webpackConfig = {
+-      devtool: 'sourcemap',
+-      entry: {
+-        one: path.join(__dirname, 'fixtures/common-chunks/one.js'),
+-        two: path.join(__dirname, 'fixtures/common-chunks/two.js')
+-      },
+-      output: {
+-        path: OUTPUT_DIR,
+-        filename: '[name].js'
+-      },
+-      plugins: [
+-        new webpack.optimize.CommonsChunkPlugin({names: ['common', 'manifesto']}),
+-        new Plugin({path: 'tmp', includeManifest: 'manifesto'})
+-      ]
+-    }
+-
+-    var expected = {
+-      one: {js: 'one.js'},
+-      two: {js: 'two.js'},
+-      common: {js: 'common.js'},
+-      manifesto: {
+-        js: 'manifesto.js',
+-        text: require('./fixtures/manifestWithSourceMap')
+-      }
+-    }
+-
+-    var args = {
+-      config: webpackConfig,
+-      expected: expected
+-    }
+-
+-    expectOutput(args, done)
+-  })
+ })
+--- a/node_modules/assets-webpack-plugin/test/multiCompiler.test.js
++++ b/node_modules/assets-webpack-plugin/test/multiCompiler.test.js
+@@ -1,4 +1,5 @@
+ /* eslint-env mocha */
++/* eslint-disable no-unused-expressions */
+ 
+ var path = require('path')
+ var expect = require('chai').expect
+@@ -59,7 +60,7 @@ describe('Plugin', function () {
+   })
+ 
+   it('updates output between compiler calls when options.update is true', function (done) {
+-    var config_1 = {
++    var config1 = {
+       entry: {
+         one: path.join(__dirname, 'fixtures/one.js')
+       },
+@@ -69,7 +70,7 @@ describe('Plugin', function () {
+       },
+       plugins: [new Plugin({path: 'tmp', update: true})]
+     }
+-    var config_2 = {
++    var config2 = {
+       entry: {
+         two: path.join(__dirname, 'fixtures/two.js')
+       },
+@@ -81,9 +82,9 @@ describe('Plugin', function () {
+     }
+ 
+     var expected = {one: {js: 'one-bundle.js'}, two: {js: 'two-bundle.js'}}
+-    var args = {config: config_2, expected: expected}
++    var args = {config: config2, expected: expected}
+ 
+-    webpack(config_1, function (err, stats) {
++    webpack(config1, function (err, stats) {
+       expect(err).to.be.null
+       expect(stats.hasErrors()).to.be.false
+       expectOutput(args, done)
+@@ -91,7 +92,7 @@ describe('Plugin', function () {
+   })
+ 
+   it('overwrites output between compiler calls when options.update is false', function (done) {
+-    var config_1 = {
++    var config1 = {
+       entry: {
+         one: path.join(__dirname, 'fixtures/one.js')
+       },
+@@ -101,7 +102,7 @@ describe('Plugin', function () {
+       },
+       plugins: [new Plugin({path: 'tmp', update: false})]
+     }
+-    var config_2 = {
++    var config2 = {
+       entry: {
+         two: path.join(__dirname, 'fixtures/two.js')
+       },
+@@ -113,9 +114,9 @@ describe('Plugin', function () {
+     }
+ 
+     var expected = {two: {js: 'two-bundle.js'}}
+-    var args = {config: config_2, expected: expected}
++    var args = {config: config2, expected: expected}
+ 
+-    webpack(config_1, function (err, stats) {
++    webpack(config1, function (err, stats) {
+       expect(err).to.be.null
+       expect(stats.hasErrors()).to.be.false
+       expectOutput(args, done)
+--- a/node_modules/assets-webpack-plugin/test/pathTemplate.test.js
++++ b/node_modules/assets-webpack-plugin/test/pathTemplate.test.js
+@@ -66,7 +66,7 @@ describe('parseTemplate', function () {
+     it('matches strings with [id] placeholder', function () {
+       var tpl = parseTemplate('foo-bar.[id].js')
+       expect(tpl.matches('foo-bar.666.js')).to.eq(true)
+-      expect(tpl.matches('foo-bar.nope.js')).to.eq(false)
++      expect(tpl.matches('foo-bar.chunk.js')).to.eq(true)
+     })
+ 
+     it('matches strings with [name] placeholder', function () {
+--- a/node_modules/assets-webpack-plugin/test/utils/expectOutput.js
++++ b/node_modules/assets-webpack-plugin/test/utils/expectOutput.js
+@@ -1,3 +1,5 @@
++/* eslint-disable no-unused-expressions */
++
+ var _ = require('lodash')
+ var expect = require('chai').expect
+ var mkdirp = require('mkdirp')
